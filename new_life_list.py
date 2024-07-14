@@ -64,7 +64,7 @@ def set_tab(tab_name,num,excel_file):
     # , '家具・インテリア', 'キッチン', '日用品（キッチン以外）', '選択リスト')
     # データフレームの内容を表示
     # データフレームの編集
-    st.session_state.editable_data = st.data_editor(
+    st.session_state["df"+str(num)]  = st.data_editor(
         df
         ,column_config={
             "種類": st.column_config.Column(
