@@ -44,7 +44,7 @@ def set_tab(tab_name,num,excel_file):
     select_list3=df_select["優先度(買う時期)"].tolist()
     # select_list3= filter(lambda a: a != '', select_list3)
     if "df" not in st.session_state:
-        st.session_state['df'] = False
+        st.session_state["df"+str(num)] = False
     # セッションステートの設定
     #if 'original_data' not in st.session_state:
      #   st.session_state.original_data = df
@@ -57,8 +57,8 @@ def set_tab(tab_name,num,excel_file):
         #st.session_state.original_data.to_csv("data"+str(num)+".csv", index=False)
         #st.session_state.editable_data.to_csv("data"+str(num)+".csv", index=False)
         #st.write(st.session_state.original_data)
-        st.session_state['df'] = df
-        st.write(st.session_state['df'])
+        st.session_state["df"+str(num)] = df
+        st.write(st.session_state["df"+str(num)])
         st.write("データが保存されました")
     
     # , '家具・インテリア', 'キッチン', '日用品（キッチン以外）', '選択リスト')
