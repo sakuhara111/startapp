@@ -63,7 +63,7 @@ def set_tab(tab_name,num,excel_file):
     # データフレームの編集
      # データエディタでデータフレームを表示・編集
     edited_df = st.data_editor(
-        st.session_state[f"df2{num}"]
+        st.session_state[f"df{num}"]
         ,column_config={
             "種類": st.column_config.Column(
                 "種類",
@@ -114,7 +114,7 @@ def set_tab(tab_name,num,excel_file):
         hide_index=False,
         num_rows="dynamic",
         # on_change=df_callback,
-        key="df"+str(num)
+        key="df2"+str(num)
     )
     st.write(num)
     st.write('以下補足')
