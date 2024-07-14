@@ -43,7 +43,7 @@ def set_tab(tab_name,num,excel_file):
     # select_list2= filter(lambda a: a != '', select_list2)
     select_list3=df_select["優先度(買う時期)"].tolist()
     # select_list3= filter(lambda a: a != '', select_list3)
-    if "df" not in st.session_state:
+    if "df"+str(num) not in st.session_state:
         st.session_state["df"+str(num)] = False
     # セッションステートの設定
     #if 'original_data' not in st.session_state:
