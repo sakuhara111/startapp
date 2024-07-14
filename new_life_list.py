@@ -52,9 +52,9 @@ def set_tab(tab_name,num,excel_file):
 
     # 編集内容を保存する関数
     def save_edits(num):
-        # st.session_state.original_data = st.session_state.editable_data.copy()
-        # st.session_state.original_data.to_csv("data"+str(num)+".csv", index=False)
-        st.session_state.editable_data.to_csv("data"+str(num)+".csv", index=False)
+        st.session_state.original_data = st.session_state.editable_data.copy()
+        st.session_state.original_data.to_csv("data"+str(num)+".csv", index=False)
+        #st.session_state.editable_data.to_csv("data"+str(num)+".csv", index=False)
         st.write("データが保存されました")
     
     # , '家具・インテリア', 'キッチン', '日用品（キッチン以外）', '選択リスト')
