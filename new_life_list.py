@@ -50,16 +50,13 @@ def set_tab(tab_name,num,excel_file):
     
     # 編集内容を保存する関数
     def save_edits(num):
-        #st.session_state.original_data = st.session_state.editable_data.copy()
-        #st.session_state.original_data.to_csv("data"+str(num)+".csv", index=False)
-        #st.session_state.editable_data.to_csv("data"+str(num)+".csv", index=False)
-        #st.write(st.session_state.original_data)
         st.session_state[f"df{num}"] = edited_df
-        st.write(st.session_state[f"df{num}"])
         # データをCSVとして保存
         csv_filename = f"data{num}.csv"
         st.session_state[f"df{num}"].to_csv(csv_filename, index=False)
-        st.write("データが保存されました")
+        st.success("データが保存されました")
+        st.write(st.session_state[f"df{num}"])
+        
     
     # , '家具・インテリア', 'キッチン', '日用品（キッチン以外）', '選択リスト')
     # データフレームの内容を表示
@@ -124,62 +121,55 @@ def set_tab(tab_name,num,excel_file):
     st.write('所持してるか:有り/無し/買換？')
     st.write('買うかどうか:買う/買わない/保留')
     st.write('優先度(買う時期):引越直後/1か月以内/徐々に/')
-    
-    # st.write(result_df)
-
     # 更新されたデータフレームの表示
     st.write('入力が完了し、他のタブへ移動する場合は保存ボタンをクリック')
     # データフレームの編集
-    # st.session_state.editable_data = result_df
     st.button('変更を保存', on_click=lambda :save_edits(num),key="button"+str(num))
 
     # st.dataframe(st.session_state.original_data)
+ 
+
+def add_csv_to_excel(excel_file, csv_files):
+    """
+    既存のExcelファイルにCSVファイルのデータを追加する関数
     
-# # 編集内容を保存する関数
-# def save_edits():
-#     st.session_state.original_data = st.session_state.editable_data.copy()
-#     st.session_state.original_data.to_csv("data.csv", index=False)
+    Parameters:
+    - excel_file: str, Excelファイルのパス
+    - csv_files: list, 追加するCSVファイルのパスのリスト
+    - tablist: list, 各CSVファイルに対応するシート名のリスト
+    """
+    # 既存のExcelファイルを読み込む
+    wb = load_workbook(excel_file)
+    
+    # 各CSVファイルを読み込み、Excelファイルに追加
+    for i, csv_file in enumerate(csv_files):
+        # CSVファイルを読み込み、ヘッダーを除く
+        df = pd.read_csv(csv_file).iloc[1:]
+        # シート名を設定
+        sheet_name = tablist[i]
+        
+        # シートが存在しない場合は新規作成
+        if sheet_name not in wb.sheetnames:
+            wb.create_sheet(title=sheet_name)
+        
+        # シートを選択
+        sheet = wb[sheet_name]
+        
+        # データフレームの内容をシートに書き込む
+        for r_idx, row in enumerate(df.values, start=2):  # 2行目から開始
+            for c_idx, value in enumerate(row, start=1):  # 1列目から開始
+                sheet.cell(row=r_idx, column=c_idx, value=value)
+    
+    # 変更を保存
+    wb.save(excel_file)
 
 
-
-
-    # st.markdown("##完了したら保存ボタンを押す")
-    # st.button("保存", on_click=change_page,key=num)
-    # # 状態保持する変数を作成して確認
-    # if ("control" in st.session_state and st.session_state["control"] == 1):
-    #     result_df.to_csv("data.csv", index=False)
-
-# def change_page():
-#     # ページ切り替えボタンコールバック
-#     st.session_state["control"]=1
 def update_data(base_dir,excel_file):
     # CSVファイルのパスを取得
     csv_pattern = os.path.join(base_dir, 'data*.csv')
     csv_files = glob.glob(csv_pattern)
     if len(csv_files)==4:
-        # 既存のExcelファイルを読み込む
-        wb = load_workbook(excel_file)
-        # 各CSVファイルを読み込み、Excelファイルに追加
-        for i, csv_file in enumerate(csv_files):
-            # CSVファイルを読み込み、ヘッダーを除く
-            df = pd.read_csv(csv_file).iloc[1:]
-            # シート名を設定（data1.csvはシート1、data2.csvはシート2、...）
-            sheet_name = TABLIST[i]
-            
-            # シートが存在しない場合は新規作成
-            if sheet_name not in wb.sheetnames:
-                wb.create_sheet(title=sheet_name)
-            
-            # シートを選択
-            sheet = wb[sheet_name]
-            
-            # データフレームの内容をシートに書き込む
-            for r_idx, row in enumerate(df.values, start=2):  # 2行目から開始
-                for c_idx, value in enumerate(row, start=1):  # 1列目から開始
-                    sheet.cell(row=r_idx, column=c_idx, value=value)
-
-        # ファイルを保存
-        wb.save(excel_file)
+        add_csv_to_excel(excel_file, csv_files)        
         return len(csv_files)
     else:
         return len(csv_files)
@@ -188,8 +178,7 @@ def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     # 既存のExcelファイルのパスを取得
     excel_file = os.path.join(base_dir, "引越しと生活のリスト.xlsx")
-    
-    
+        
     # ページ情報、基本的なレイアウト
     st.set_page_config(
         page_title="引越し・生活用品リスト",
@@ -230,16 +219,11 @@ def main():
     # 普通のテキスト。Html や Markdown のパースはしない。
     # st.text('Text')
     # タブ
-    tab1, tab2, tab3, tab4 = st.tabs(TABLIST)
-    with tab1:
-        set_tab(TABLIST[0],1,excel_file)
-    with tab2:
-        set_tab(TABLIST[1],2,excel_file)
-    with tab3:
-        set_tab(TABLIST[2],3,excel_file)
-    with tab4:
-        set_tab(TABLIST[3],4,excel_file)
-        
+    tabs = st.tabs(TABLIST)
+    for i, tab_name in enumerate(TABLIST):
+        with tabs[i]:
+            set_tab(tab_name, i, excel_file)
+    
 if __name__ == '__main__':
     main()
     
