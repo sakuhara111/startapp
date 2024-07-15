@@ -56,6 +56,9 @@ def set_tab(tab_name,num,excel_file):
         #st.write(st.session_state.original_data)
         st.session_state[f"df{num}"] = edited_df
         st.write(st.session_state[f"df{num}"])
+        # データをCSVとして保存
+        csv_filename = f"data{num}.csv"
+        st.session_state[f"df{num}"].to_csv(csv_filename, index=False)
         st.write("データが保存されました")
     
     # , '家具・インテリア', 'キッチン', '日用品（キッチン以外）', '選択リスト')
