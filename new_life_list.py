@@ -1,10 +1,10 @@
-import streamlit as st
-from openpyxl import load_workbook
-import pandas as pd
 import datetime
-import pandas as pd
 import glob
 import os
+
+import pandas as pd
+import streamlit as st
+from openpyxl import load_workbook
 
 MAXROW=30-1
 MAXCOL=7
@@ -178,6 +178,13 @@ def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     # 既存のExcelファイルのパスを取得
     excel_file = os.path.join(base_dir, "引越しと生活のリスト.xlsx")
+    # CSVファイルのパスを取得
+    csv_pattern = os.path.join(base_dir, 'data*.csv')
+    csv_files = glob.glob(csv_pattern)
+    # 各CSVファイルを読み込み、Excelファイルに追加
+    for csv_file in csv_files:
+        os.remove(csv_file)
+    
         
     # ページ情報、基本的なレイアウト
     st.set_page_config(
@@ -222,7 +229,7 @@ def main():
     tabs = st.tabs(TABLIST)
     for i, tab_name in enumerate(TABLIST):
         with tabs[i]:
-            set_tab(tab_name, i, excel_file)
+            set_tab(tab_name, i+1, excel_file)
     
 if __name__ == '__main__':
     main()
